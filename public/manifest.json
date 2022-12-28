@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "Zagraj w Kulki",
+  "short_name": "Kulki",
+  "background_color": "#000000",
+  "start_url": ".",
+  "display": "standalone",
+  "description": "Odpocznij i zagraj sobie w Kulki",
+  "icons": [
+    {
+      "src": "icon/512.png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon/512.png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "icon/256.png",
+      "sizes": "256x256",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon/256.png",
+      "sizes": "256x256",
+      "purpose": "any"
+    },
+    {
+      "src": "icon/128.png",
+      "sizes": "128x128",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon/256m.png",
+      "sizes": "256x256",
+      "purpose": "maskable monochrome"
+    }
+  ]
+}
