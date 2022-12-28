@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "start": "esbuild --bundle src/index.ts --outfile=bundle.js --servedir=.",
     "build:prod": "esbuild --bundle src/index.ts --outfile=dist/bundle.js --minify && minify index.html > dist/index.html"
   },
   "private": true,
