@@ -1,10 +1,11 @@
 {
   "scripts": {
-    "build:prod": "esbuild --bundle src/index.ts --outfile=bundle.js --minify"
+    "build:prod": "esbuild --bundle src/index.ts --outfile=dist/bundle.js --minify && minify index.html > dist/index.html"
   },
   "private": true,
   "main": "index.js",
   "dependencies": {
+    "minify": "9.1.0",
     "esbuild": "0.16.12"
   }
 }
