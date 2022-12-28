@@ -1,12 +1,13 @@
 {
   "scripts": {
-    "start": "esbuild --bundle src/index.ts --outfile=bundle.js --servedir=.",
-    "build:prod": "esbuild --bundle src/index.ts --outfile=dist/bundle.js --minify && minify index.html > dist/index.html"
+    "start": "esbuild --bundle src/index.ts --outfile=public/bundle.js --servedir=public",
+    "build:prod": "rm -rf dist && esbuild --bundle src/index.ts --outfile=dist/bundle.js --minify && minify public/index.html > dist/index.html && workbox generateSW workbox-config.js"
   },
   "private": true,
   "main": "index.js",
   "dependencies": {
+    "esbuild": "0.16.12",
     "minify": "9.1.0",
-    "esbuild": "0.16.12"
+    "workbox-cli": "^6.5.4"
   }
 }

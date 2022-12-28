@@ -42,3 +42,7 @@ INSTANCE.addEventListener('next-ball-colors-changed', (nextColors) => {
 })
 
 INSTANCE.resetGame()
+
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('/sw.js');
+}
