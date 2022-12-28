@@ -1,6 +1,6 @@
 import EventEmitter from './event-emitter'
 
-export type TaskExecutor = () => void
+export type TaskExecutor = () => (void) | Promise<void>
 export interface SchedulerEvent {
 	'queue-empty': undefined,
 	'queue-non-empty': undefined
@@ -19,12 +19,12 @@ export class GameScheduler extends EventEmitter<SchedulerEvent> {
 	public schedule(task: TaskExecutor): Promise<void> {
 		console.assert(!!task)
 
-		return new Promise<void>((resolve, reject) => {
+		return new Promise<void>(async (resolve, reject) => {
 			const wasEmpty = this.enqueuedTasks.length === 0
-			this.enqueuedTasks.push(() => {
+			this.enqueuedTasks.push(async () => {
 				try {
-					task()
-				} catch (e){
+					await task()
+				} catch (e) {
 					reject(e)
 				}
 				resolve()
@@ -33,7 +33,7 @@ export class GameScheduler extends EventEmitter<SchedulerEvent> {
 			if (wasEmpty) {
 				this.emit('queue-non-empty')
 				if (this.nextAllowedStart < Date.now()) {
-					this.executeTask()
+					await this.executeTask()
 				} else {
 					clearTimeout(this.timeoutId)
 					this.timeoutId = setTimeout(this.executeTask.bind(this), this.interval)
@@ -43,11 +43,11 @@ export class GameScheduler extends EventEmitter<SchedulerEvent> {
 	}
 
 
-	private executeTask() {
+	private async executeTask() {
 		this.nextAllowedStart = Date.now() + this.interval
 		const task = this.enqueuedTasks.shift()
 		console.assert(!!task)
-		task()
+		await task()
 
 		if (this.enqueuedTasks.length !== 0)
 			this.timeoutId = setTimeout(this.executeTask.bind(this), this.interval)

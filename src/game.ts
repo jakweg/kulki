@@ -97,10 +97,10 @@ export class Game extends EventEmitter<GameEvent> {
 
 				const count = await this.executePostMoveCheck()
 				if (count === 0 || this.options.boardWidth * this.options.boardHeight === this.emptyTiles.size)
-					await this.scheduler.schedule(() => {
+					await this.scheduler.schedule(async () => {
 						for (let i = 0; i < this.options.spawnBallsAfterEveryMoveCount; i++) {
 							this.placeRandomBall()
-							this.executePostMoveCheck()
+							await this.executePostMoveCheck()
 						}
 					})
 				await this.executePostMoveCheck()
