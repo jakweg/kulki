@@ -22,6 +22,7 @@ export interface GameEvent {
 
 export class Game extends EventEmitter<GameEvent> {
 	public readonly scheduler = new GameScheduler()
+	public isActive = true
 	private readonly boardTiles: Table2d<GameTile>
 	private readonly emptyTiles = new Set<GameTile>()
 	private readonly tilesRequireCheck = new Set<GameTile>()
@@ -47,10 +48,6 @@ export class Game extends EventEmitter<GameEvent> {
 			this.options.boardElement.appendChild(tile.element)
 			return tile
 		})
-
-		// this.boardTiles.get(1, 1).myColor = Colors.orange
-		// this.boardTiles.get(0, 1).myColor = Colors.orange
-		// this.boardTiles.get(1, 0).myColor = Colors.orange
 	}
 
 	addBallElement(element: HTMLElement) {
@@ -66,6 +63,7 @@ export class Game extends EventEmitter<GameEvent> {
 	}
 
 	async notifyIWasClicked(me: GameTile) {
+		if (!this.isActive) return
 		console.assert(!!me)
 		this.boardTiles.forEach(obj => obj.isPreview = false)
 		if (this.selectedTile === me) {
@@ -98,19 +96,23 @@ export class Game extends EventEmitter<GameEvent> {
 				const count = await this.executePostMoveCheck()
 				if (count === 0 || this.options.boardWidth * this.options.boardHeight === this.emptyTiles.size)
 					await this.scheduler.schedule(async () => {
+						if (!this.isActive) return
 						for (let i = 0; i < this.options.spawnBallsAfterEveryMoveCount; i++) {
 							this.placeRandomBall()
 							await this.executePostMoveCheck()
 						}
 					})
+				if (!this.isActive) return
 				await this.executePostMoveCheck()
 				path.forEach(({ x, y }) => this.boardTiles.get(x, y).isTraveledTile = false)
 				this.checkLoseCondition()
+				if (!this.isActive) return
 			}
 		}
 	}
 
 	notifyIWasHovered(me: GameTile) {
+		if (!this.isActive) return
 		console.assert(!!me)
 		if (this.selectedTile) {
 			const path = findPath(
@@ -133,6 +135,7 @@ export class Game extends EventEmitter<GameEvent> {
 	}
 
 	placeRandomBall() {
+		if (!this.isActive) return
 		if (this.checkLoseCondition()) return
 
 		let index = Math.random() * this.emptyTiles.size | 0
@@ -155,6 +158,7 @@ export class Game extends EventEmitter<GameEvent> {
 	}
 
 	async executePostMoveCheck(): Promise<number> {
+		if (!this.isActive) return
 		const tilesToBeCleared = new Set<GameTile>()
 
 		const getWithThisColorInRow = (color: GameColor,
@@ -216,6 +220,7 @@ export class Game extends EventEmitter<GameEvent> {
 		this.score = 0
 		this.isGameOver = false
 		this.options.boardElement.classList.remove('game-over')
+		this.options.boardElement.classList.remove('moves-in-progress')
 		this.emit('score-changed', this.score)
 		this.generateTiles()
 		for (let i = 0; i < this.options.spawnBallsAfterEveryMoveCount; i++) {
@@ -227,7 +232,12 @@ export class Game extends EventEmitter<GameEvent> {
 		this.executePostMoveCheck()
 	}
 
+	public terminate() {
+		this.isActive = false
+	}
+
 	private onSchedulerQueueEmptyStatusChanged(empty: boolean) {
+		if (!this.isActive) return
 		if (empty) {
 			this.options.boardElement.classList.remove('moves-in-progress')
 		} else
@@ -236,6 +246,7 @@ export class Game extends EventEmitter<GameEvent> {
 	}
 
 	private getRandomBallColor(): GameColor {
+		if (!this.isActive) return
 		const next = this.nextBallColors.shift()
 		this.nextBallColors.push(randomBallColor())
 		this.emit('next-ball-colors-changed', this.nextBallColors)
