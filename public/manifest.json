@@ -37,6 +37,11 @@
       "src": "icon/256m.png",
       "sizes": "256x256",
       "purpose": "maskable monochrome"
+    },
+    {
+      "src": "icon/any.svg",
+      "sizes": "any",
+      "purpose": "maskable"
     }
   ]
 }
