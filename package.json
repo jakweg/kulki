@@ -1,17 +1,10 @@
 {
-  "devDependencies": {
-    "concurrently": "latest",
-    "webpack": "latest",
-    "webpack-cli": "^3.3.12"
-  },
   "scripts": {
-    "build": "npx webpack --mode production",
-    "serve": "concurrently 'npx webpack-dev-server --mode development --watch' 'tsc' 'npx webpack --watch --mode development'"
+    "build:prod": "esbuild --bundle src/index.ts --outfile=bundle.js --minify"
   },
   "private": true,
   "main": "index.js",
   "dependencies": {
-    "ts-loader": "^8.0.7",
-    "typescript": "^4.0.5"
+    "esbuild": "0.16.12"
   }
 }

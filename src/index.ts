@@ -1,4 +1,3 @@
-import GameColor from './colors'
 import Game from './game'
 
 export const INSTANCE = new Game({

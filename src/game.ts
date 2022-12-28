@@ -4,7 +4,6 @@ import GameScheduler from './game-scheduler'
 import GameTile from './game-tile'
 import findPath from './path-finder'
 import Table2d from './table2d'
-import { TimeMeter } from './time-meter'
 
 export interface GameOptions {
 	boardWidth: number
@@ -66,7 +65,6 @@ export class Game extends EventEmitter<GameEvent> {
 		this.emptyTiles.delete(me)
 	}
 
-	@TimeMeter()
 	async notifyIWasClicked(me: GameTile) {
 		console.assert(!!me)
 		this.boardTiles.forEach(obj => obj.isPreview = false)
@@ -92,7 +90,7 @@ export class Game extends EventEmitter<GameEvent> {
 			if (path) {
 				this.selectedTile.onUnselected()
 
-				path.forEach(({x,y}) => this.boardTiles.get(x,y).isTraveledTile = true)
+				path.forEach(({ x, y }) => this.boardTiles.get(x, y).isTraveledTile = true)
 				await this.selectedTile.transferBallByPath(me, path)
 
 				this.selectedTile = null
@@ -106,7 +104,7 @@ export class Game extends EventEmitter<GameEvent> {
 						}
 					})
 				await this.executePostMoveCheck()
-				path.forEach(({x,y}) => this.boardTiles.get(x,y).isTraveledTile = false)
+				path.forEach(({ x, y }) => this.boardTiles.get(x, y).isTraveledTile = false)
 				this.checkLoseCondition()
 			}
 		}
@@ -125,7 +123,7 @@ export class Game extends EventEmitter<GameEvent> {
 
 			if (path) {
 				this.boardTiles.forEach(obj => obj.isPreview = false)
-				path.forEach(({x,y}) => this.boardTiles.get(x,y).isPreview = true)
+				path.forEach(({ x, y }) => this.boardTiles.get(x, y).isPreview = true)
 			}
 		}
 	}
@@ -134,7 +132,6 @@ export class Game extends EventEmitter<GameEvent> {
 		this.tilesRequireCheck.add(me)
 	}
 
-	@TimeMeter()
 	placeRandomBall() {
 		if (this.checkLoseCondition()) return
 
@@ -157,14 +154,13 @@ export class Game extends EventEmitter<GameEvent> {
 		return false
 	}
 
-	@TimeMeter()
 	async executePostMoveCheck(): Promise<number> {
 		const tilesToBeCleared = new Set<GameTile>()
 
 		const getWithThisColorInRow = (color: GameColor,
-		                               startX: number, startY: number,
-		                               offsetX: number, offsetY: number,
-		                               dontDoReverse: boolean = false): Set<GameTile> => {
+			startX: number, startY: number,
+			offsetX: number, offsetY: number,
+			dontDoReverse: boolean = false): Set<GameTile> => {
 			const list = new Set<GameTile>()
 			let currentX = startX
 			let currentY = startY
