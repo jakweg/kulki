@@ -1,8 +1,9 @@
-import GameColor, { randomBallColor } from './colors'
+import GameColor, { GAME_COLORS } from './colors'
 import EventEmitter from './event-emitter'
 import GameScheduler from './game-scheduler'
 import GameTile from './game-tile'
 import findPath from './path-finder'
+import SeededRandom from './seeded-random'
 import Table2d from './table2d'
 
 export interface GameOptions {
@@ -21,6 +22,7 @@ export interface GameEvent {
 }
 
 export class Game extends EventEmitter<GameEvent> {
+	private readonly random = new SeededRandom((Date.now() / 1000 / 5) | 0)
 	public readonly scheduler = new GameScheduler()
 	public isActive = true
 	private readonly boardTiles: Table2d<GameTile>
@@ -138,7 +140,7 @@ export class Game extends EventEmitter<GameEvent> {
 		if (!this.isActive) return
 		if (this.checkLoseCondition()) return
 
-		let index = Math.random() * this.emptyTiles.size | 0
+		let index = this.random.next() * this.emptyTiles.size | 0
 		const iterator = this.emptyTiles.values()
 		while (index-- > 0) iterator.next()
 
@@ -224,7 +226,7 @@ export class Game extends EventEmitter<GameEvent> {
 		this.emit('score-changed', this.score)
 		this.generateTiles()
 		for (let i = 0; i < this.options.spawnBallsAfterEveryMoveCount; i++) {
-			this.nextBallColors.push(randomBallColor())
+			this.nextBallColors.push(this.randomizeColor())
 		}
 		for (let i = 0; i < this.options.initialBallsCount; i++) {
 			this.placeRandomBall()
@@ -248,9 +250,13 @@ export class Game extends EventEmitter<GameEvent> {
 	private getRandomBallColor(): GameColor {
 		if (!this.isActive) return
 		const next = this.nextBallColors.shift()
-		this.nextBallColors.push(randomBallColor())
+		this.nextBallColors.push(this.randomizeColor())
 		this.emit('next-ball-colors-changed', this.nextBallColors)
 		return next
+	}
+
+	private randomizeColor(): GameColor {
+		return GAME_COLORS[this.random.next() * GAME_COLORS.length | 0]
 	}
 }
 
