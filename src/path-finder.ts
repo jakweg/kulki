@@ -1,121 +1,104 @@
-
-import SortedList from './sorted-list'
-
-/**
- * Checks if node is walkable
- * Must return true if node exists and is walkable
- * Must return false otherwise
- */
-export type WalkableTester = ((x: number, y: number) => boolean)
-
-/**
- * Simple entity that represents point in 2D
- */
 export interface Position {
 	x: number
 	y: number
 }
 
-interface Node extends Position {
-	/**
-	 * Distance from starting node
-	 */
-	costG: number
-	/**
-	 * Distance from end node (heuristic)
-	 */
-	costH: number
-	/**
-	 * costG + costH
-	 */
-	costF: number
-	parent?: Node
-}
+export type WalkableTester = ((x: number, y: number) => boolean)
 
-/**
- * Finds the shortest path between two points, doesn't include cross tile moves for example from [0,0]->[1,1]
- * Returns list of positions or null if failed to find a path
- * @param sx x coordinate of start
- * @param sy y coordinate of start
- * @param dx x coordinate of destination
- * @param dy y coordinate of destination
- * @param tester callback which will be executed to check if tile is walkable or not
- * @returns list of positions between points start and destination, index 0 is start and last index is destination element, returns null if failed to determine path
- */
+type PositionToExpand = Readonly<{
+	x: number
+	y: number
+	cost: number
+	from: PositionToExpand | null
+	lastDirection: number
+	distance: number
+	historyOfPathIds: ReadonlySet<number>
+}>
+
+const computeFieldId = (x: number, y: number) => (x << 4 | y) & 0xFF
+
+const offsets = [[0, -1, 0], [1, 1, 0], [2, 0, 1], [3, 0, -1]]
+
 export const findPath = (sx: number, sy: number,
-                         dx: number, dy: number,
-                         tester: WalkableTester): Position[] | null => {
+	dx: number, dy: number,
+	tester: WalkableTester): Position[] | null => {
 
-	const calculateCost = (x1: number, y1: number,
-	                       x2: number, y2: number) => (Math.abs(x1 - x2) + Math.abs(y1 - y2)) * 10
+	if (!tester(dx, dy)) return null
 
-	const calculateCostG = (x: number, y: number) => calculateCost(x, y, sx, sy)
-	const calculateCostH = (x: number, y: number) => calculateCost(x, y, dx, dy)
+	const calculateDistance = (x1: number, y1: number,
+		x2: number, y2: number) => (Math.abs(x1 - x2) + Math.abs(y1 - y2))
 
-	const createNode = (x: number, y: number): Node => {
-		const costG = calculateCostG(x, y)
-		const costH = calculateCostH(x, y)
-		return {
-			x, y, costH, costG,
-			costF: costG + costH,
-		}
-	}
+	const found: PositionToExpand[] = []
+	const toExpand: PositionToExpand[] = []
 
+	toExpand.push({
+		x: sx, y: sy,
+		cost: 0,
+		from: null,
+		lastDirection: -1,
+		distance: calculateDistance(sx, sy, dx, dy),
+		historyOfPathIds: new Set([computeFieldId(sx, sy)])
+	})
 
-	const fCostComparator = (o1: Node, o2: Node) => o1.costF < o2.costF
+	let smallestCostOfFoundPath = Number.MAX_SAFE_INTEGER
 
-	const openNodes: SortedList<Node> = new SortedList<Node>(fCostComparator)
-	const closedNodes: SortedList<Node> = new SortedList<Node>(fCostComparator)
+	let limitToAnyPath = 2000
+	let limitToNotFound = 10_000
 
+	while (toExpand.length > 0) {
+		if (limitToAnyPath-- < 0 && found.length > 0)
+			break
 
-	const executeWithWalkableNeighboursNotInClosed = (x: number, y: number, callback: (n: Node) => void) => {
-		x--
-		if (tester(x, y) && !closedNodes.has(n => x === n.x && y === n.y))
-			callback(createNode(x, y))
-		x++
-		y--
-		if (tester(x, y) && !closedNodes.has(n => x === n.x && y === n.y))
-			callback(createNode(x, y))
-		x++
-		y++
-		if (tester(x, y) && !closedNodes.has(n => x === n.x && y === n.y))
-			callback(createNode(x, y))
-		x--
-		y++
-		if (tester(x, y) && !closedNodes.has(n => x === n.x && y === n.y))
-			callback(createNode(x, y))
-	}
+		if (limitToNotFound-- === 0) return null
 
-	openNodes.add(createNode(sx, sy))
-
-	while (true) {
-		const current = openNodes.getAndRemoveFirst()
-		if (!current) {
-			// unable to find path :/
-			return null
-		}
-		closedNodes.add(current)
+		const current = toExpand.pop()
+		if (current.cost > smallestCostOfFoundPath) continue
 
 		if (current.x === dx && current.y === dy) {
-			// found path!
-			const stack = []
-			let tmp = current
-			while (tmp) {
-				stack.unshift(tmp)
-				tmp = tmp.parent
+			if (smallestCostOfFoundPath > current.cost) {
+				found.length = 0
+				smallestCostOfFoundPath = current.cost
 			}
-			return stack
+			found.push(current)
 		}
 
-		executeWithWalkableNeighboursNotInClosed(current.x, current.y, (neighbour) => {
-			if (!openNodes.has(e => e.x === neighbour.x && e.y === neighbour.y)) {
-				neighbour.parent = current
-				openNodes.add(neighbour)
+		for (const [direction, ox, oy] of offsets) {
+			const newCost = current.cost + (current.lastDirection === direction ? 1 : 1001)
+
+			if (newCost >= smallestCostOfFoundPath) continue
+
+			const x = current.x + ox
+			const y = current.y + oy
+
+			const id = computeFieldId(x, y)
+
+			if (current.historyOfPathIds.has(id)) continue
+
+			if (!tester(x, y)) continue
+
+			const newExpander = {
+				x, y, cost: newCost,
+				from: current,
+				lastDirection: direction,
+				distance: calculateDistance(x, y, dx, dy),
+				historyOfPathIds: new Set([...current.historyOfPathIds, id])
 			}
-		})
-
+			if (newExpander.distance <= current.distance)
+				toExpand.push(newExpander)
+			else
+				toExpand.unshift(newExpander)
+		}
 	}
-}
 
+	const foundPath = found[0]
+	let path: Position[] = []
+	let tmp = foundPath
+	while (tmp != null) {
+		path.unshift({ x: tmp.x, y: tmp.y })
+		tmp = tmp.from
+	}
+
+	return path
+}
 
 export default findPath
