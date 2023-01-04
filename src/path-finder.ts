@@ -1,3 +1,5 @@
+import { findPathAStar } from "./a-star"
+
 export interface Position {
 	x: number
 	y: number
@@ -23,7 +25,8 @@ export const findPath = (sx: number, sy: number,
 	dx: number, dy: number,
 	tester: WalkableTester): Position[] | null => {
 
-	if (!tester(dx, dy)) return null
+	const shortestPathFromAStar = findPathAStar(sx, sy, dx, dy, tester)
+	if (shortestPathFromAStar === null || shortestPathFromAStar.length === 2) return shortestPathFromAStar
 
 	const calculateDistance = (x1: number, y1: number,
 		x2: number, y2: number) => (Math.abs(x1 - x2) + Math.abs(y1 - y2))
@@ -40,16 +43,35 @@ export const findPath = (sx: number, sy: number,
 		historyOfPathIds: new Set([computeFieldId(sx, sy)])
 	})
 
-	let smallestCostOfFoundPath = Number.MAX_SAFE_INTEGER
+	let smallestCostOfFoundPath = 0
+	let lastOffsetX = 0
+	let lastOffsetY = 0
+	let previousPathPart: Position | null = null
+	for (const p of shortestPathFromAStar) {
+		if (previousPathPart !== null) {
+			const ox = previousPathPart.x - p.x
+			const oy = previousPathPart.y - p.y
+			if (ox !== lastOffsetX || oy !== lastOffsetY) {
+				lastOffsetX = ox
+				lastOffsetY = oy
+				smallestCostOfFoundPath += 1000
+			}
+			smallestCostOfFoundPath += 1
+		}
+		previousPathPart = p
+	}
 
 	let limitToAnyPath = 2000
-	let limitToNotFound = 10_000
+	let limitToNotFound = 7_000
 
 	while (toExpand.length > 0) {
-		if (limitToAnyPath-- < 0 && found.length > 0)
+		if (limitToAnyPath-- < 0 && found.length > 0) {
 			break
+		}
 
-		if (limitToNotFound-- === 0) return null
+		if (limitToNotFound-- === 0) {
+			return shortestPathFromAStar
+		}
 
 		const current = toExpand.pop()
 		if (current.cost > smallestCostOfFoundPath) continue
@@ -90,7 +112,12 @@ export const findPath = (sx: number, sy: number,
 		}
 	}
 
+
 	const foundPath = found[0]
+	if (!foundPath) {
+		return shortestPathFromAStar
+	}
+
 	let path: Position[] = []
 	let tmp = foundPath
 	while (tmp != null) {
