@@ -8,7 +8,7 @@ export class GameTile {
 	private myBall: ColorBall = null
 
 	constructor(
-		public readonly  game: Game,
+		public readonly game: Game,
 		public readonly positionX: number,
 		public readonly positionY: number,
 	) {
@@ -41,7 +41,7 @@ export class GameTile {
 	}
 
 	public onSelected() {
-		this.element.style.setProperty('--color', this.myColor)
+		this.element.style.setProperty('--color', `var(--${this.myColor})`)
 		this.element.classList.add('selected')
 		this.myBall?.onSelected()
 	}

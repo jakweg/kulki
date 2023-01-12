@@ -1,4 +1,4 @@
-export const GAME_COLORS = ['blue', 'red', 'teal', 'green', 'yellow', 'purple', 'white']
+export const GAME_COLORS = [...new Array(7)].map((_, i) => `c${i}`)
 
 // noinspection JSUnusedGlobalSymbols
 export type GameColor = typeof GAME_COLORS[number]

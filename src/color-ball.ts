@@ -37,10 +37,10 @@ export class ColorBall {
 		const realSteps = new Set<Position>()
 		const length = steps.length
 		let lastStep = steps[0]
-		let lastOffset = {x: 0, y: 0}
+		let lastOffset = { x: 0, y: 0 }
 		for (let i = 1; i < length; i++) {
 			const it = steps[i]
-			const offset = {x: it.x - lastStep.x, y: it.y - lastStep.y}
+			const offset = { x: it.x - lastStep.x, y: it.y - lastStep.y }
 			if (offset.x !== lastOffset.x || offset.y !== lastOffset.y) {
 				lastOffset = offset
 				realSteps.add(lastStep)
@@ -78,7 +78,7 @@ export class ColorBall {
 
 		func('--x', this.posX.toString())
 		func('--y', this.posY.toString())
-		func('--color', this.color)
+		func('--color', `var(--${this.color})`)
 	}
 }
 

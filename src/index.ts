@@ -32,13 +32,13 @@ const startGame = () => {
 			nextColorsSpan.innerHTML = ''
 			for (const color of nextColors) {
 				const span = document.createElement('span')
-				span.style.setProperty('--color', color)
+				span.style.setProperty('--color', `var(--${color})`)
 				nextColorsSpan.appendChild(span)
 			}
 		} else {
 			let i = 0
 			for (const child of children) {
-				(child as HTMLElement).style.setProperty('--color', nextColors[i])
+				(child as HTMLElement).style.setProperty('--color', `var(--${nextColors[i]})`)
 				i++
 			}
 		}
