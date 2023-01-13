@@ -3,11 +3,20 @@ import Game from './game';
 const scoreSpan = document.getElementById('score')
 const nextColorsSpan = document.getElementById('next-colors')
 
+const readSerializeState = () => {
+	try {
+		return localStorage.getItem('lastGame')
+	} catch (_) {
+		// ignore
+	}
+}
+
 let oldInstance: Game | undefined = undefined
 const startGame = () => {
 	oldInstance?.terminate()
+	const board = document.getElementById('board')
 	const instance = oldInstance = new Game({
-		boardElement: document.getElementById('board'),
+		boardElement: board,
 		boardHeight: 9,
 		boardWidth: 9,
 		spawnBallsAfterEveryMoveCount: 3,
@@ -43,7 +52,7 @@ const startGame = () => {
 			}
 		}
 	})
-	instance.resetGame()
+	instance.deserializeGameOrReset(readSerializeState())
 }
 
 document.getElementById('reset-btn').addEventListener('click', () => startGame())
@@ -52,3 +61,14 @@ startGame()
 if ((location.port === '' || location.port === '443') && 'serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/sw.js');
 }
+
+document.addEventListener('visibilitychange', () => {
+	if (document.visibilityState === 'visible') return
+	try {
+		const state = oldInstance?.serialize()
+		if (state)
+			localStorage.setItem('lastGame', state)
+	} catch (_) {
+		// ignore
+	}
+})

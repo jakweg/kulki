@@ -6,6 +6,8 @@ import findPath from './path-finder'
 import SeededRandom from './seeded-random'
 import Table2d from './table2d'
 
+const CURRENT_VERSION = 1
+
 export interface GameOptions {
 	boardWidth: number
 	boardHeight: number
@@ -41,7 +43,7 @@ export class Game extends EventEmitter<GameEvent> {
 		this.scheduler.addEventListener('queue-non-empty', () => this.onSchedulerQueueEmptyStatusChanged(false))
 	}
 
-	generateTiles() {
+	clearState() {
 		this.options.boardElement.innerHTML = ''
 		this.emptyTiles.clear()
 		this.tilesRequireCheck.clear()
@@ -148,6 +150,28 @@ export class Game extends EventEmitter<GameEvent> {
 		tile.setMyBallColor(this.getRandomBallColor())
 	}
 
+	private setDeserializedColors(colors: GameColor[]) {
+		let i = 0
+		this.boardTiles.forEach(tile => {
+			const color = colors[i++]
+			if (color) {
+				tile.setMyBallColor(color)
+				this.emptyTiles.delete(tile)
+			}
+		})
+	}
+
+	public serialize(): any {
+		const colors: GameColor[] = []
+		this.boardTiles.forEach(t => colors.push(t.myColor))
+		return JSON.stringify({
+			version: CURRENT_VERSION,
+			score: this.score,
+			nextBallColors: this.nextBallColors,
+			colors
+		})
+	}
+
 	public checkLoseCondition(): boolean {
 		if (this.isGameOver) return true
 		if (this.emptyTiles.size === 0) {
@@ -217,19 +241,38 @@ export class Game extends EventEmitter<GameEvent> {
 		return tilesToBeCleared.size
 	}
 
-	public resetGame() {
+	public deserializeGameOrReset(serialized: string) {
 		this.nextBallColors.length = 0
 		this.score = 0
 		this.isGameOver = false
 		this.options.boardElement.classList.remove('game-over')
 		this.options.boardElement.classList.remove('moves-in-progress')
+
+		this.clearState()
+
+		let restored = false
+		if (serialized)
+			try {
+				const json = JSON.parse(serialized)
+				if (json.version === CURRENT_VERSION) {
+					this.setDeserializedColors(json.colors)
+					this.score = json.score
+					this.nextBallColors.push(...json.nextBallColors)
+					this.emit('next-ball-colors-changed', this.nextBallColors)
+					restored = true
+				}
+			} catch (_) {
+				return
+			}
+
 		this.emit('score-changed', this.score)
-		this.generateTiles()
-		for (let i = 0; i < this.options.spawnBallsAfterEveryMoveCount; i++) {
-			this.nextBallColors.push(this.randomizeColor())
-		}
-		for (let i = 0; i < this.options.initialBallsCount; i++) {
-			this.placeRandomBall()
+		if (!restored) {
+			for (let i = 0; i < this.options.spawnBallsAfterEveryMoveCount; i++) {
+				this.nextBallColors.push(this.randomizeColor())
+			}
+			for (let i = 0; i < this.options.initialBallsCount; i++) {
+				this.placeRandomBall()
+			}
 		}
 		this.executePostMoveCheck()
 	}
