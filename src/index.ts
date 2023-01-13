@@ -12,7 +12,7 @@ const readSerializeState = () => {
 }
 
 let oldInstance: Game | undefined = undefined
-const startGame = () => {
+const startGame = (ignoreSerialized: boolean) => {
 	oldInstance?.terminate()
 	const board = document.getElementById('board')
 	const instance = oldInstance = new Game({
@@ -52,11 +52,11 @@ const startGame = () => {
 			}
 		}
 	})
-	instance.deserializeGameOrReset(readSerializeState())
+	instance.deserializeGameOrReset(ignoreSerialized ? undefined : readSerializeState())
 }
 
-document.getElementById('reset-btn').addEventListener('click', () => startGame())
-startGame()
+document.getElementById('reset-btn').addEventListener('click', () => startGame(true))
+startGame(false)
 
 if ((location.port === '' || location.port === '443') && 'serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/sw.js');

@@ -162,6 +162,7 @@ export class Game extends EventEmitter<GameEvent> {
 	}
 
 	public serialize(): any {
+		if (this.isGameOver) return null
 		const colors: GameColor[] = []
 		this.boardTiles.forEach(t => colors.push(t.myColor))
 		return JSON.stringify({
