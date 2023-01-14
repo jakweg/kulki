@@ -62,13 +62,22 @@ if ((location.port === '' || location.port === '443') && 'serviceWorker' in navi
 	navigator.serviceWorker.register('/sw.js');
 }
 
-document.addEventListener('visibilitychange', () => {
-	if (document.visibilityState === 'visible') return
+let lastSerializationDate = Date.now()
+const performSerialization = () => {
+	const now = Date.now();
+	if (now - lastSerializationDate < 500) return
+	lastSerializationDate = now
 	try {
 		const state = oldInstance?.serialize()
-		if (state)
-			localStorage.setItem('lastGame', state)
+		localStorage.setItem('lastGame', state || '')
 	} catch (_) {
 		// ignore
 	}
+}
+
+document.addEventListener('visibilitychange', () => {
+	if (document.visibilityState === 'visible') return
+	performSerialization()
 })
+
+window.addEventListener('blur', () => performSerialization())
