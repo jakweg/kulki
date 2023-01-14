@@ -1,5 +1,5 @@
 class SeededRandom {
-    public constructor(private seed: number) {
+    public constructor(public seed: number) {
     }
 
     public next(): number {

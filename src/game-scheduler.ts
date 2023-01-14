@@ -8,7 +8,7 @@ export interface SchedulerEvent {
 
 export class GameScheduler extends EventEmitter<SchedulerEvent> {
 	private nextAllowedStart = 0
-	private timeoutId: number
+	private timeoutId: ReturnType<typeof setTimeout>
 	private enqueuedTasks: TaskExecutor[] = []
 
 	constructor(private readonly interval: number = 250) {

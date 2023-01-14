@@ -64,15 +64,21 @@ if ((location.port === '' || location.port === '443') && 'serviceWorker' in navi
 
 let lastSerializationDate = Date.now()
 const performSerialization = () => {
-	const now = Date.now();
-	if (now - lastSerializationDate < 500) return
-	lastSerializationDate = now
-	try {
-		const state = oldInstance?.serialize()
-		localStorage.setItem('lastGame', state || '')
-	} catch (_) {
-		// ignore
+	const doRealPerform = () => {
+		const now = Date.now();
+		if (now - lastSerializationDate < 500) return
+		lastSerializationDate = now
+		try {
+			const state = oldInstance?.serialize()
+			localStorage.setItem('lastGame', state || '')
+		} catch (_) {
+			// ignore
+		}
 	}
+	if (document.getElementById('board').classList.contains('moves-in-progress'))
+		setTimeout(performSerialization, 500)
+	else
+		doRealPerform()
 }
 
 document.addEventListener('visibilitychange', () => {
