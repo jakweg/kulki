@@ -1,4 +1,5 @@
 const setPl = () => {
+    document.documentElement.setAttribute('lang', 'pl')
     document.title = 'Kulki'
     document.querySelector('meta[name="description"]').setAttribute('content', "Odpocznij sobie i zagraj w Kulki")
     document.getElementById('title').textContent = 'Kulki'
