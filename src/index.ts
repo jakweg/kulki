@@ -1,4 +1,5 @@
 import Game from './game';
+import { getLostText, init as initLanguage } from './lang';
 
 const scoreSpan = document.getElementById('score')
 const nextColorsSpan = document.getElementById('next-colors')
@@ -31,7 +32,7 @@ const startGame = (ignoreSerialized: boolean) => {
 
 	instance.addEventListener('game-over', (score) => {
 		if (!instance.isActive) return
-		requestAnimationFrame(() => requestAnimationFrame(() => alert('Koniec gry, twój wynik to ' + score)))
+		requestAnimationFrame(() => requestAnimationFrame(() => alert(getLostText(score))))
 	})
 
 	instance.addEventListener('next-ball-colors-changed', (nextColors) => {
@@ -87,3 +88,5 @@ document.addEventListener('visibilitychange', () => {
 })
 
 window.addEventListener('blur', () => performSerialization())
+initLanguage()
+document.body.classList.remove('loading')

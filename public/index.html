@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Kulki</title>
+    <title>Color lines</title>
     <meta name="theme-color" content="#000000" />
     <link rel="manifest" href="manifest.json" />
-    <meta name="description" content="Odpocznij sobie i zagraj w Kulki" />
+    <meta name="description" content="Relax and play Color lines!" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="apple-touch-icon" href="icon/192.png" />
     <!--suppress CssUnusedSymbol, CssUnresolvedCustomProperty -->
     <style>
+      :root {
+        background: black;
+      }
       body {
         color-scheme: light dark;
         --tile-size: min(calc(95vw / 9), 70px);
@@ -24,7 +27,6 @@
         --c5: purple;
         --c6: #ffae00;
 
-        background: black;
         color: #ccc;
         display: grid;
         position: fixed;
@@ -39,6 +41,10 @@
         overflow: hidden;
         font-size: 1.3rem;
         font-family: "Roboto Light", monospace;
+        transition: opacity 0.2s;
+      }
+      body.loading {
+        opacity: 0;
       }
 
       h3 {
@@ -243,7 +249,7 @@
       }
     </style>
   </head>
-  <body>
+  <body class="loading">
     <header>
       <aside>
         <button id="reset-btn">
@@ -255,9 +261,12 @@
         </button>
       </aside>
       <div>
-        <h3>Kulki</h3>
-        <h4>Twój wynik to <span id="score">0</span></h4>
-        <h5><span>Kolejne kolory:</span> <span id="next-colors"></span></h5>
+        <h3 id="title">Color lines</h3>
+        <h4 id="score-prefix">Your score is <span id="score">0</span></h4>
+        <h5>
+          <span id="next-prefix">Next colors:</span>
+          <span id="next-colors"></span>
+        </h5>
       </div>
       <aside>
         <button style="visibility: hidden">

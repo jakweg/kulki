@@ -259,7 +259,7 @@ export class Game extends EventEmitter<GameEvent> {
 				if (json.version === CURRENT_VERSION) {
 					this.setDeserializedColors(json.colors)
 					this.score = json.score
-					this.random.seed = +json.seed || 0
+					this.random.seed = +json.seed || Date.now()
 					this.nextBallColors.push(...json.nextBallColors)
 					this.emit('next-ball-colors-changed', this.nextBallColors)
 					restored = true
