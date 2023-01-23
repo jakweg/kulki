@@ -1,3 +1,5 @@
+const lang = navigator.language.toLocaleLowerCase()
+const isPolish = lang === 'pl' || lang === 'pl-pl'
 
 const setUpManifest = (variant: string | null) => {
     const link = document.createElement('link')
@@ -18,12 +20,12 @@ const setPl = () => {
 }
 
 export const init = () => {
-    if (navigator.language === 'pl') setPl()
+    if (isPolish) setPl()
     else setUpManifest(null)
 }
 
 export const getLostText = (score: number) => {
-    if (navigator.language === 'pl')
+    if (isPolish)
         return 'Koniec gry, twój wynik to ' + score
 
     return 'Game over, your score is ' + score
