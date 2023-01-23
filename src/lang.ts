@@ -1,3 +1,11 @@
+
+const setUpManifest = (variant: string | null) => {
+    const link = document.createElement('link')
+    link.setAttribute('rel', 'manifest')
+    link.setAttribute('href', `manifest${variant ? ('-' + variant) : ''}.json`)
+    document.head.appendChild(link)
+}
+
 const setPl = () => {
     document.documentElement.setAttribute('lang', 'pl')
     document.title = 'Kulki'
@@ -5,10 +13,13 @@ const setPl = () => {
     document.getElementById('title').textContent = 'Kulki'
     document.getElementById('score-prefix').textContent = 'Twój wynik to '
     document.getElementById('next-prefix').textContent = 'Kolejne kolory:'
+
+    setUpManifest('pl')
 }
 
 export const init = () => {
     if (navigator.language === 'pl') setPl()
+    else setUpManifest(null)
 }
 
 export const getLostText = (score: number) => {

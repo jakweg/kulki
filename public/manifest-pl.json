@@ -1,13 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
   "id": "kulki.wegrzyn.dev",
-  "name": "Play Color lines",
-  "short_name": "Color lines",
+  "name": "Zagraj w Kulki",
+  "short_name": "Kulki",
   "background_color": "#000000",
   "theme_color": "#000000",
   "start_url": ".",
   "display": "standalone",
-  "description": "Relax and enjoy some Color lines",
+  "description": "Odpocznij i zagraj sobie w Kulki",
   "icons": [
     {
       "src": "icon/512.png",
