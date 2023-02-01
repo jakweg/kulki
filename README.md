@@ -1,6 +1,6 @@
 ## Kulki webowe
 
-#### Taki tam mały szkolny projekt, chcesz zagrać? [Zapraszam](https://jakubekweg.github.io/kulki/)
+#### Taki tam mały szkolny projekt, chcesz zagrać? [Zapraszam](https://kulki.wegrzyn.dev/)
 
 ![Animacja z przykładową rozgrywką](showcase.gif)
 
