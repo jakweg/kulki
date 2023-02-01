@@ -89,6 +89,5 @@ document.addEventListener('visibilitychange', () => {
 
 window.addEventListener('blur', () => performSerialization())
 initLanguage()
-document.body.classList.remove('loading')
 
 window.addEventListener("beforeinstallprompt", e => e.preventDefault());

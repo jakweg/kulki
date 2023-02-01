@@ -40,10 +40,6 @@
         overflow: hidden;
         font-size: 1.3rem;
         font-family: "Roboto Light", monospace;
-        transition: opacity 0.2s;
-      }
-      body.loading {
-        opacity: 0;
       }
 
       h3 {
@@ -248,7 +244,7 @@
       }
     </style>
   </head>
-  <body class="loading">
+  <body>
     <header>
       <aside>
         <button id="reset-btn">
@@ -261,7 +257,9 @@
       </aside>
       <div>
         <h3 id="title">Color lines</h3>
-        <h4><span id="score-prefix">Your score is </span><span id="score">0</span></h4>
+        <h4>
+          <span id="score-prefix">Your score is </span><span id="score">0</span>
+        </h4>
         <h5>
           <span id="next-prefix">Next colors:</span>
           <span id="next-colors"></span>
