@@ -14,7 +14,7 @@
       }
       body {
         color-scheme: light dark;
-        --tile-size: min(calc(95vw / 9), 70px);
+        --tile-size: min(calc((98vmin - 100px) / 9), 80px);
         --ball-size: calc(var(--tile-size) * 0.72);
         --ball-margin: calc((var(--tile-size) - var(--ball-size)) / 2);
 
@@ -28,6 +28,7 @@
 
         color: #ccc;
         display: grid;
+        place-items: center;
         position: fixed;
         left: 0;
         right: 0;
@@ -40,6 +41,13 @@
         overflow: hidden;
         font-size: 1.3rem;
         font-family: "Roboto Light", monospace;
+      }
+
+      @media (min-aspect-ratio: 2 / 1) {
+        body {
+          grid-template-columns: auto auto;
+          --tile-size: min(calc((98vmin - 20px) / 9), 90px);
+        }
       }
 
       h3 {
