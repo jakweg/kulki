@@ -6,9 +6,10 @@ import findPath from './path-finder'
 import SeededRandom from './seeded-random'
 import Table2d from './table2d'
 
-const CURRENT_VERSION = 1
+const CURRENT_VERSION = 2
 
 export interface GameOptions {
+	reducedColors: boolean
 	boardWidth: number
 	boardHeight: number
 	boardElement: HTMLElement
@@ -170,7 +171,8 @@ export class Game extends EventEmitter<GameEvent> {
 			score: this.score,
 			random: this.random.seed,
 			nextBallColors: this.nextBallColors,
-			colors
+			colors,
+			reducedColors: this.options.reducedColors,
 		})
 	}
 
@@ -261,6 +263,7 @@ export class Game extends EventEmitter<GameEvent> {
 					this.score = json.score
 					this.random.seed = +json.seed || Date.now()
 					this.nextBallColors.push(...json.nextBallColors)
+					this.options.reducedColors = json.reducedColors
 					this.emit('next-ball-colors-changed', this.nextBallColors)
 					restored = true
 				}
@@ -301,7 +304,8 @@ export class Game extends EventEmitter<GameEvent> {
 	}
 
 	private randomizeColor(): GameColor {
-		return GAME_COLORS[this.random.next() * GAME_COLORS.length | 0]
+		const length = GAME_COLORS.length - (this.options.reducedColors ? 1 : 0)
+		return GAME_COLORS[this.random.next() * length | 0]
 	}
 }
 

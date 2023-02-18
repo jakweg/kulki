@@ -1,5 +1,6 @@
 import Game from './game';
 import { getLostText, init as initLanguage } from './lang';
+import { LESS_COLORS, bindToBooleanStore } from './settings-store';
 
 const scoreSpan = document.getElementById('score')
 const nextColorsSpan = document.getElementById('next-colors')
@@ -18,6 +19,7 @@ const startGame = (ignoreSerialized: boolean) => {
 	const board = document.getElementById('board')
 	const instance = oldInstance = new Game({
 		boardElement: board,
+		reducedColors: LESS_COLORS.get(),
 		boardHeight: 9,
 		boardWidth: 9,
 		spawnBallsAfterEveryMoveCount: 3,
@@ -91,3 +93,12 @@ window.addEventListener('blur', () => performSerialization())
 initLanguage()
 
 window.addEventListener("beforeinstallprompt", e => e.preventDefault());
+
+bindToBooleanStore(LESS_COLORS, document.getElementById('checkbox-less-colors') as HTMLInputElement)
+
+
+document.getElementById('settings-btn').addEventListener('click', () =>
+	(document.querySelector('dialog') as HTMLDialogElement)?.showModal())
+
+document.getElementById('close-settings-btn').addEventListener('click', () =>
+	(document.querySelector('dialog') as HTMLDialogElement)?.close())
