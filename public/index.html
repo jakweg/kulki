@@ -49,7 +49,7 @@
         }
       }
 
-      @media (min-aspect-ratio: 2 / 1) {
+      @media (min-aspect-ratio: 2 / 1) and (max-width: 1400px) {
         body {
           grid-template-columns: auto auto;
           --tile-size: min(calc(96svh / 9), 90px);
@@ -234,6 +234,9 @@
         transition: background-color 0.3s;
       }
 
+      aside {
+        padding: 0 2ch;
+      }
       header {
         display: grid;
         place-items: center;
