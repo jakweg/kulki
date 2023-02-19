@@ -1,6 +1,6 @@
 import Game from './game';
 import { getLostText, init as initLanguage } from './lang';
-import { LESS_COLORS, bindToBooleanStore } from './settings-store';
+import { FAST_ANIMATIONS, LESS_COLORS, bindToBooleanStore } from './settings-store';
 
 const scoreSpan = document.getElementById('score')
 const nextColorsSpan = document.getElementById('next-colors')
@@ -56,6 +56,7 @@ const startGame = (ignoreSerialized: boolean) => {
 		}
 	})
 	instance.deserializeGameOrReset(ignoreSerialized ? undefined : readSerializeState())
+	instance.scheduler.interval = 250 * (FAST_ANIMATIONS.get() ? 0.4 : 1)
 }
 
 document.getElementById('reset-btn').addEventListener('click', () => startGame(true))
@@ -96,9 +97,15 @@ window.addEventListener("beforeinstallprompt", e => e.preventDefault());
 
 bindToBooleanStore(LESS_COLORS, document.getElementById('checkbox-less-colors') as HTMLInputElement)
 
-
 document.getElementById('settings-btn').addEventListener('click', () =>
 	(document.querySelector('dialog') as HTMLDialogElement)?.showModal())
 
 document.getElementById('close-settings-btn').addEventListener('click', () =>
 	(document.querySelector('dialog') as HTMLDialogElement)?.close())
+
+bindToBooleanStore(FAST_ANIMATIONS, document.getElementById('checkbox-fast-animations') as HTMLInputElement,
+	(fast) => {
+		document.body.style.setProperty('--animation-multiplier', `${fast ? 0.4 : 1}`)
+		if (oldInstance)
+			oldInstance.scheduler.interval = 250 * (FAST_ANIMATIONS.get() ? 0.4 : 1)
+	})

@@ -26,6 +26,8 @@
         --c5: purple;
         --c6: #2983da;
 
+        --animation-multiplier: 1;
+
         color: #ccc;
         display: grid;
         place-items: center;
@@ -93,7 +95,7 @@
         height: var(--tile-size);
         position: absolute;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all calc(0.3s * var(--animation-multiplier));
         transform: translate(
           calc(var(--x) * var(--tile-size)),
           calc(var(--y) * var(--tile-size))
@@ -193,7 +195,7 @@
       .ball {
         pointer-events: none;
         position: absolute;
-        transition: all 0.2s;
+        transition: all calc(0.2s * var(--animation-multiplier));
         transform: translate(
           calc(var(--x) * var(--tile-size) + var(--ball-margin)),
           calc(var(--y) * var(--tile-size) + var(--ball-margin))
@@ -340,7 +342,11 @@
         </h2>
         <label>
           <input type="checkbox" id="checkbox-less-colors" />
-          <span id="less-colors">Preferuj mniej kolorów</span>
+          <span id="less-colors">Mniej kolorów</span>
+        </label>
+        <label>
+          <input type="checkbox" id="checkbox-fast-animations" />
+          <span id="fast-animations">Szybsze animacje</span>
         </label>
         <p id="setting-warning">Zmiany będą obowiązywać od kolejnej gry</p>
       </header>

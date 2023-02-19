@@ -23,10 +23,15 @@ const createBooleanStore = (key: string, defaultValue: boolean) => {
 }
 
 export const LESS_COLORS = createBooleanStore('less-colors', false)
+export const FAST_ANIMATIONS = createBooleanStore('fast-animations', false)
 
-export const bindToBooleanStore = (store: ReturnType<typeof createBooleanStore>, element: HTMLInputElement) => {
+export const bindToBooleanStore = (store: ReturnType<typeof createBooleanStore>,
+    element: HTMLInputElement, listener?: (value: boolean) => void) => {
     element.checked = store.get()
     element.addEventListener('change', e => {
-        LESS_COLORS.set((e.target as HTMLInputElement).checked)
+        const value = (e.target as HTMLInputElement).checked
+        store.set(value)
+        listener?.(value)
     });
+    listener?.(element.checked)
 }

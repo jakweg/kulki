@@ -10,8 +10,9 @@ export class GameScheduler extends EventEmitter<SchedulerEvent> {
 	private nextAllowedStart = 0
 	private timeoutId: ReturnType<typeof setTimeout>
 	private enqueuedTasks: TaskExecutor[] = []
+	public interval: number = 250
 
-	constructor(private readonly interval: number = 250) {
+	constructor() {
 		super()
 	}
 
