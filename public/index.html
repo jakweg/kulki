@@ -30,7 +30,7 @@
 
         color: #ccc;
         display: grid;
-        place-items: center;
+        align-items: stretch;
         position: fixed;
         left: 0;
         right: 0;
@@ -54,6 +54,7 @@
       @media (min-aspect-ratio: 2 / 1) and (max-width: 1400px) {
         body {
           grid-template-columns: auto auto;
+          justify-content: stretch;
           --tile-size: min(calc(96svh / 9), 90px);
         }
       }
@@ -237,7 +238,7 @@
       }
 
       aside {
-        padding: 0 2ch;
+        text-align: center;
       }
       body > header {
         display: grid;
