@@ -1,5 +1,5 @@
 import { Board, Color } from "./board";
-import { BOARD_SIZE, TENSORS_PER_SET } from "./config";
+import { BOARD_SIZE, MIN_LINE_LENGTH, TENSORS_PER_SET } from "./config";
 import SeededRandom from "./seeded-random";
 
 export const generateData = function (seed: number) {
@@ -12,9 +12,11 @@ export const generateData = function (seed: number) {
     for (let i = 0; i < TENSORS_PER_SET; i++) {
         board.reset()
 
-        for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i) {
+        for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i)
             board.setOnIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Blue)
-        }
+
+        for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i)
+            board.setOnIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Blue)
 
         if (random.bool())
             board.transpose()
@@ -26,25 +28,39 @@ export const generateData = function (seed: number) {
             }
             board.set(xIndex, random.int(BOARD_SIZE), Color.None)
         }
-        const xIndex = random.int(BOARD_SIZE)
-        const yIndex = random.int(BOARD_SIZE)
+        let xIndex = random.int(BOARD_SIZE)
+        let yIndex = random.int(BOARD_SIZE)
 
         // put some random stuff
         for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i) {
             board.setOnIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Red)
         }
 
-        for (let i = 0; i < BOARD_SIZE; ++i) {
-            board.set(xIndex, i, Color.Red)
+        // set proper line
+        for (let i = 0, o = random.int(BOARD_SIZE - MIN_LINE_LENGTH + 1); i < MIN_LINE_LENGTH; ++i) {
+            board.set(xIndex, i + o, Color.Red)
         }
 
+        // set this one missing
         board.set(xIndex, yIndex, Color.None)
 
-        if (random.bool())
+
+        if (random.bool()) {
             board.transpose()
+
+            const tmp = xIndex
+            xIndex = yIndex
+            yIndex = tmp
+
+        }
 
         finalX.push(board.getAsTensorForColor(Color.Red))
         finalY.push(board.getExpectedTensor(xIndex, yIndex))
+
+        // const s = board.getAsTensorForColor(Color.Red).dataSync().slice(BOARD_SIZE * BOARD_SIZE)
+        // for (let i = 0; i < BOARD_SIZE; ++i)
+        //     console.log(s.subarray(i * BOARD_SIZE, i * BOARD_SIZE + BOARD_SIZE));
+        // process.exit(0)
     }
     return { xs: finalX, ys: finalY }
 };

@@ -28,7 +28,6 @@ model.compile({
 });
 
 
-const range = (length: number) => [...new Array(length)].map((_, i) => i)
 
 const trainModelHavingData = (data: any) => model.fitDataset(tf.data.zip({
     xs: tf.data.array(data.xs),
@@ -47,30 +46,8 @@ export const doStuff = async () => {
     }
     await previousTraining
 
-    const result = (model.predict(tf.tensor([
-        1, 0, 0, 1, 1,
-        1, 0, 0, 1, 1,
-        0, 0, 0, 1, 1,
-        0, 0, 0, 0, 0,
-        1, 0, 0, 1, 1,
+    model.save('file://./model')
+    console.log('OK');
 
-        1, 0, 0, 1, 0,
-        0, 0, 0, 1, 0,
-        0, 0, 0, 1, 0,
-        0, 0, 0, 0, 0,
-        1, 0, 0, 1, 0,
-    ].map(e => e === 1), [1, BOARD_SIZE * BOARD_SIZE * 2])) as any).dataSync()
-
-    const rows = []
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        rows.push(([...result.slice(i * BOARD_SIZE, (i + 1) * BOARD_SIZE)].map((e: number) => e.toFixed(5))))
-    }
-    console.table(rows)
-    const max = (result as number[]).reduce((p, c) => c > p ? c : p, -1)
-    rows.length = 0
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        rows.push(([...result.slice(i * BOARD_SIZE, (i + 1) * BOARD_SIZE)].map((e: number) => e === max ? 1 : 0)))
-    }
-    console.table(rows)
 }
 await doStuff()
