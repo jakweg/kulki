@@ -6,5 +6,7 @@ services:
     build:
       context: .
       dockerfile: trainer.Dockerfile
+    env_file:
+      - public.env
     volumes:
       - ${MODELS:?Where to store models}:/models:rw
