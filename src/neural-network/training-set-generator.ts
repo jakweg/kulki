@@ -1,6 +1,7 @@
 import { Board, Color } from "./board";
 import { BOARD_SIZE, MIN_LINE_LENGTH, TENSORS_PER_SET } from "./config";
 import SeededRandom from "./seeded-random";
+import { repeatUntil } from "./utils";
 
 export const generateData = function (seed: number) {
     const random = new SeededRandom(seed)
@@ -12,38 +13,30 @@ export const generateData = function (seed: number) {
     for (let i = 0; i < TENSORS_PER_SET; i++) {
         board.reset()
 
-        for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i)
-            board.setOnIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Blue)
-
-        for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i)
-            board.setOnIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Blue)
-
-        if (random.bool())
-            board.transpose()
-
-        {
-            const xIndex = random.int(BOARD_SIZE)
-            for (let i = 0; i < BOARD_SIZE; ++i) {
-                board.set(xIndex, i, Color.Blue)
-            }
-            board.set(xIndex, random.int(BOARD_SIZE), Color.None)
-        }
         let xIndex = random.int(BOARD_SIZE)
         let yIndex = random.int(BOARD_SIZE)
 
         // put some random stuff
         for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i) {
-            board.setOnIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Red)
+            board.setAtIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Red)
         }
 
         // set proper line
-        for (let i = 0, o = random.int(BOARD_SIZE - MIN_LINE_LENGTH + 1); i < MIN_LINE_LENGTH; ++i) {
-            board.set(xIndex, i + o, Color.Red)
+        const lineLength = random.intRange(MIN_LINE_LENGTH, BOARD_SIZE)
+        const offset = random.int(BOARD_SIZE - lineLength + 1)
+        for (let i = 0; i < lineLength; ++i) {
+            board.set(xIndex, i + offset, Color.Red)
         }
 
-        // set this one missing
-        board.set(xIndex, yIndex, Color.None)
 
+        let indexToMoveFrom = repeatUntil(
+            () => random.int(BOARD_SIZE * BOARD_SIZE),
+            (index) => board.getAtIndex(index) !== Color.None
+        )
+
+        // set this one missing
+        board.setAtIndex(indexToMoveFrom, Color.Red)
+        board.set(xIndex, yIndex, Color.None)
 
         if (random.bool()) {
             board.transpose()
@@ -52,10 +45,12 @@ export const generateData = function (seed: number) {
             xIndex = yIndex
             yIndex = tmp
 
+            const coords = board.indexToCoords(indexToMoveFrom)
+            indexToMoveFrom = board.coordsToIndex(coords[1], coords[0])
         }
 
         finalX.push(board.getAsTensorForColor(Color.Red))
-        finalY.push(board.getExpectedTensor(xIndex, yIndex))
+        finalY.push(board.getExpectedTensor(board.coordsToIndex(xIndex, yIndex), indexToMoveFrom))
     }
     return { xs: finalX, ys: finalY }
 };

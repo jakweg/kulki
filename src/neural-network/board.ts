@@ -21,7 +21,11 @@ export class Board {
 
         this.board[x + y * this.size] = value
     }
-    public setOnIndex(index: number, value: Color) {
+    public getAtIndex(index: number): Color {
+        return this.board[index]
+    }
+
+    public setAtIndex(index: number, value: Color) {
         this.board[index] = value
     }
 
@@ -50,13 +54,20 @@ export class Board {
             }
     }
 
-    public getExpectedTensor(x: number, y: number) {
+    public coordsToIndex(x: number, y: number): number {
         this.validateCoords(x, y)
+        return x + y * this.size
+    }
 
-        const newBoard = new Uint8Array(this.size * this.size)
-        newBoard[x + y * this.size] = 1
+    public indexToCoords(index: number): [number, number] {
+        return [index % this.size, (index / this.size) | 0,]
+    }
 
-        return tf.tensor(newBoard, [this.size * this.size], 'bool')
+    public getExpectedTensor(emptyIndex: number, moveFromIndex: number) {
+        const newBoard = new Uint8Array(this.size * this.size * this.size * this.size)
+        newBoard[this.size * this.size * emptyIndex + moveFromIndex] = 1
+
+        return tf.tensor(newBoard, [newBoard.length], 'bool')
     }
 
 
@@ -104,14 +115,18 @@ export class Board {
 
 
     public static fromResult(result: Float32Array): Board {
-        const size = Math.round(Math.sqrt(result.length))
+        const size = Math.round(Math.sqrt(Math.sqrt(result.length)))
+
         const board = new Board(size)
 
         const max = Math.max(...result)
 
-        for (let i = 0; i < size * size; ++i)
-            if (result[i] === max)
-                board.setOnIndex(i, 1)
+        const index = result.indexOf(max)
+        const moveFromIndex = index % (size * size)
+        const moveToIndex = (index / (size * size)) | 0
+
+        board.setAtIndex(moveFromIndex, 4)
+        board.setAtIndex(moveToIndex, 3)
 
         return board
     }

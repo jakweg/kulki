@@ -10,6 +10,10 @@ class SeededRandom {
         return (this.next01() * max) | 0
     }
 
+    public intRange(min: number, max: number): number {
+        return (this.int((max - min) | 0) + min) | 0
+    }
+
     public bool(): boolean {
         return this.int(2) === 0
     }

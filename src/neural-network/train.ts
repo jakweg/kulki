@@ -11,11 +11,11 @@ const model = tf.sequential({
             inputShape: [BOARD_SIZE * BOARD_SIZE * 2],
         }),
         tf.layers.dense({
-            units: BOARD_SIZE * BOARD_SIZE * 2,
+            units: BOARD_SIZE * BOARD_SIZE * BOARD_SIZE * BOARD_SIZE * BOARD_SIZE,
             activation: 'relu6',
         }),
         tf.layers.dense({
-            units: BOARD_SIZE * BOARD_SIZE,
+            units: BOARD_SIZE * BOARD_SIZE * BOARD_SIZE * BOARD_SIZE,
             activation: 'softmax',
         }),
     ]
