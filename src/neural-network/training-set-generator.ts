@@ -56,11 +56,6 @@ export const generateData = function (seed: number) {
 
         finalX.push(board.getAsTensorForColor(Color.Red))
         finalY.push(board.getExpectedTensor(xIndex, yIndex))
-
-        // const s = board.getAsTensorForColor(Color.Red).dataSync().slice(BOARD_SIZE * BOARD_SIZE)
-        // for (let i = 0; i < BOARD_SIZE; ++i)
-        //     console.log(s.subarray(i * BOARD_SIZE, i * BOARD_SIZE + BOARD_SIZE));
-        // process.exit(0)
     }
     return { xs: finalX, ys: finalY }
 };
