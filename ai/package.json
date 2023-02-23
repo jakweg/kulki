@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "build": "esbuild --bundle --format=esm --external:@tensorflow/tfjs-node src/train.ts --platform=node src/predict.ts --outdir=dist"
+  },
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.2.0",
+    "@tensorflow/tfjs-node": "^4.2.0",
+    "esbuild": "0.16.12"
+  }
+}

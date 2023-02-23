@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "dev:nn": "esbuild --bundle --format=esm --external:@tensorflow/tfjs-node --external:@tensorflow/tfjs-node-gpu src/neural-network/train.ts src/neural-network/predict.ts --outdir=public/nn --watch",
     "start": "esbuild --bundle src/index.ts --outfile=public/bundle.js --servedir=public",
     "build:prod": "rm -rf dist && esbuild --bundle src/index.ts --outfile=dist/bundle.js --minify && minify public/index.html > dist/index.html && cp public/manifest*.json dist/ && cp -r public/icon dist/icon && workbox generateSW workbox-config.json"
   },
@@ -8,8 +7,6 @@
   "private": true,
   "main": "index.js",
   "dependencies": {
-    "@tensorflow/tfjs": "^4.2.0",
-    "@tensorflow/tfjs-node": "^4.2.0",
     "esbuild": "0.16.12",
     "minify": "9.1.0",
     "workbox-cli": "^6.5.4"

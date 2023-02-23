@@ -1,5 +1,5 @@
 
-import { Board, Color } from './board';
+import { Board } from './board';
 import tf from './tf';
 
 const model = await tf.loadLayersModel('file://./model/model.json');
@@ -12,9 +12,8 @@ export const doStuff = async () => {
  . . 0 . . 
  . . . . 1 `)
 
-  const tensor = b.getAsTensorForColor(Color.Red, true)
 
-  const result = (model.predict([tensor], {}) as any).dataSync()
+  const result = (model.predict([b.getAsTensorForColors(true)], {}) as any).dataSync()
   const got = Board.fromResult(result)
 
   console.log(got.toStringVisualization());

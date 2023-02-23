@@ -1,3 +1,4 @@
+import { COLORS_COUNT } from './config'
 import tf from './tf'
 
 export const enum Color {
@@ -29,18 +30,17 @@ export class Board {
         this.board[index] = value
     }
 
-    public getAsTensorForColor(color: Color, use2d: boolean = false) {
+    public getAsTensorForColors(use2d: boolean = false) {
         const oldBoard = this.board
         const squaredSize = this.size * this.size
-        const newBoard = new Uint8Array(squaredSize * 2)
-        for (let i = 0, l = squaredSize; i < l; ++i) {
-            newBoard[i] = oldBoard[i] !== Color.None ? 1 : 0
-        }
-        for (let i = 0, l = squaredSize; i < l; ++i) {
-            newBoard[i + squaredSize] = oldBoard[i] === color ? 1 : 0
+        const newBoard = new Uint8Array(squaredSize * COLORS_COUNT)
+        for (let c = 0; c < COLORS_COUNT; ++c) {
+            for (let i = 0, l = squaredSize; i < l; ++i) {
+                newBoard[i + c * squaredSize] = oldBoard[i] === c ? 1 : 0
+            }
         }
 
-        return tf.tensor(newBoard, use2d ? [1, squaredSize * 2] : [squaredSize * 2], 'bool')
+        return tf.tensor(newBoard, use2d ? [1, squaredSize * COLORS_COUNT] : [squaredSize * COLORS_COUNT], 'bool')
     }
 
     public transpose() {
@@ -125,8 +125,8 @@ export class Board {
         const moveFromIndex = index % (size * size)
         const moveToIndex = (index / (size * size)) | 0
 
-        board.setAtIndex(moveFromIndex, 4)
-        board.setAtIndex(moveToIndex, 3)
+        board.setAtIndex(moveFromIndex, 4 as Color)
+        board.setAtIndex(moveToIndex, 3 as Color)
 
         return board
     }

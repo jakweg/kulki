@@ -1,5 +1,5 @@
 import { Board, Color } from "./board";
-import { BOARD_SIZE, MIN_LINE_LENGTH, TENSORS_PER_SET } from "./config";
+import { BOARD_SIZE, COLORS_COUNT, MIN_LINE_LENGTH, TENSORS_PER_SET } from "./config";
 import SeededRandom from "./seeded-random";
 import { repeatUntil } from "./utils";
 
@@ -16,9 +16,11 @@ export const generateData = function (seed: number) {
         let xIndex = random.int(BOARD_SIZE)
         let yIndex = random.int(BOARD_SIZE)
 
-        // put some random stuff
-        for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i) {
-            board.setAtIndex(random.int(BOARD_SIZE * BOARD_SIZE), Color.Red)
+        // put some random balls
+        for (let color = 0; color < COLORS_COUNT; ++color) {
+            for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i) {
+                board.setAtIndex(random.int(BOARD_SIZE * BOARD_SIZE), color)
+            }
         }
 
         // set proper line
@@ -49,7 +51,7 @@ export const generateData = function (seed: number) {
             indexToMoveFrom = board.coordsToIndex(coords[1], coords[0])
         }
 
-        finalX.push(board.getAsTensorForColor(Color.Red))
+        finalX.push(board.getAsTensorForColors())
         finalY.push(board.getExpectedTensor(board.coordsToIndex(xIndex, yIndex), indexToMoveFrom))
     }
     return { xs: finalX, ys: finalY }
