@@ -54,6 +54,15 @@ export class Board {
             }
     }
 
+    public shiftColors(by: Color, colorsCount: Color) {
+        if (by === 0 || by === colorsCount) return
+        const data = this.board
+        for (let i = 0, l = data.length; i < l; i++) {
+            if (data[i] === 0) continue
+            data[i] = (data[i] + by - 1) % (colorsCount) + 1
+        }
+    }
+
     public coordsToIndex(x: number, y: number): number {
         this.validateCoords(x, y)
         return x + y * this.size

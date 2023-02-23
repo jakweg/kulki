@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "esbuild --bundle --format=esm --external:@tensorflow/tfjs-node src/train.ts --platform=node src/predict.ts --outdir=dist"
+    "build": "esbuild --bundle --format=esm --external:@tensorflow/tfjs-node src/train.ts --platform=node src/predict.ts --outdir=dist",
+    "predict": "esbuild --bundle --format=esm --external:@tensorflow/tfjs-node --platform=node src/predict.ts --outdir=dist && node dist/predict.js"
   },
   "type": "module",
   "private": true,

@@ -17,7 +17,7 @@ export const generateData = function (seed: number) {
         let yIndex = random.int(BOARD_SIZE)
 
         // put some random balls
-        for (let color = 0; color < COLORS_COUNT; ++color) {
+        for (let color = 1; color < COLORS_COUNT; ++color) {
             for (let i = 0, l = random.int(BOARD_SIZE); i < l; ++i) {
                 board.setAtIndex(random.int(BOARD_SIZE * BOARD_SIZE), color)
             }
@@ -50,6 +50,8 @@ export const generateData = function (seed: number) {
             const coords = board.indexToCoords(indexToMoveFrom)
             indexToMoveFrom = board.coordsToIndex(coords[1], coords[0])
         }
+
+        board.shiftColors(random.int(COLORS_COUNT), COLORS_COUNT)
 
         finalX.push(board.getAsTensorForColors())
         finalY.push(board.getExpectedTensor(board.coordsToIndex(xIndex, yIndex), indexToMoveFrom))

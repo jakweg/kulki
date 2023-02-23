@@ -2,15 +2,16 @@
 import { Board } from './board';
 import tf from './tf';
 
-const model = await tf.loadLayersModel('file://./model/model.json');
+const model = await tf.loadLayersModel('file://./models/model/model.json');
 
 export const doStuff = async () => {
   const b = Board.fromString(` 
- . . 1 . . 
+ . . 2 . . 
  1 1 1 . . 
+ . 1 . . . 
  . . . . . 
- . . 0 . . 
- . . . . 1 `)
+ . . . . 2 `)
+  b.shiftColors(1, 2)
 
 
   const result = (model.predict([b.getAsTensorForColors(true)], {}) as any).dataSync()
