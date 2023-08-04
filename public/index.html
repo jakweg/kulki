@@ -132,7 +132,6 @@
       .moves-in-progress,
       .game-over {
         pointer-events: none;
-        /*background: red;*/
       }
 
       @keyframes BallAppear {
@@ -274,6 +273,34 @@
       label {
         text-align: left;
         display: block;
+      }
+
+      @keyframes score-move {
+        from {
+          transform: translateY(-1em);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0em);
+          opacity: 1;
+        }
+      }
+      #score {
+        view-transition-name: score;
+        display: inline-block;
+        min-width: 3ch;
+        height: 1em;
+        text-align: left;
+      }
+      ::view-transition-old(score) {
+        transform: translateY(1em);
+      }
+      ::view-transition-new(score) {
+        animation: score-move 0.3s;
+      }
+      ::view-transition-old(score),
+      ::view-transition-new(score) {
+        transition: transform 0.3s;
       }
     </style>
   </head>
