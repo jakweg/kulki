@@ -19,7 +19,7 @@ export class ColorBall {
 		this.posX = initialPositionX
 		this.posY = initialPositionY
 		this.element = document.createElement('div')
-		this.element.classList.add('ball', 'added')
+		this.element.classList.add('ball', 'added', `color-${color}`)
 		setTimeout(() => this.element.classList.remove('added'), 1000)
 
 		this.updateElementProperties()

@@ -3,6 +3,7 @@ import { getLostText, init as initLanguage } from "./lang";
 import {
   FAST_ANIMATIONS,
   LESS_COLORS,
+  SHOW_SYMBOLS,
   bindToBooleanStore,
 } from "./settings-store";
 
@@ -140,5 +141,16 @@ bindToBooleanStore(
     );
     if (oldInstance)
       oldInstance.scheduler.interval = 250 * (FAST_ANIMATIONS.get() ? 0.4 : 1);
+  }
+);
+
+bindToBooleanStore(
+  SHOW_SYMBOLS,
+  document.getElementById("checkbox-show-symbols") as HTMLInputElement,
+  (show) => {
+    document.body.classList.toggle(
+      "show-symbols",
+      show
+    );
   }
 );

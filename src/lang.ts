@@ -16,8 +16,9 @@ const setEnglishLanguage = () => {
     document.getElementById('score-prefix').textContent = 'Your score is '
     document.getElementById('next-prefix').textContent = 'Next colors:'
     document.getElementById('setting-warning').textContent = 'Changes will affect only new games'
-    document.getElementById('less-colors').textContent = 'Play with less colors'
+    document.getElementById('less-colors').textContent = 'Play with 6 instead of 7 colors'
     document.getElementById('fast-animations').textContent = 'Fast animations'
+    document.getElementById('show-symbols').textContent = 'Show symbols';
     document.getElementById('settings').textContent = 'Preferences'
 
     setUpManifest('en')

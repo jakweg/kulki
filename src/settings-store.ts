@@ -24,6 +24,7 @@ const createBooleanStore = (key: string, defaultValue: boolean) => {
 
 export const LESS_COLORS = createBooleanStore('less-colors', false)
 export const FAST_ANIMATIONS = createBooleanStore('fast-animations', false)
+export const SHOW_SYMBOLS = createBooleanStore('show-symbols', false)
 
 export const bindToBooleanStore = (store: ReturnType<typeof createBooleanStore>,
     element: HTMLInputElement, listener?: (value: boolean) => void) => {

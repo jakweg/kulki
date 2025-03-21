@@ -207,6 +207,10 @@
         height: var(--ball-size);
         border-radius: 50%;
         cursor: pointer;
+        display: grid;
+        place-items: center;
+        color: black;
+        font-size: calc(var(--ball-size) * 0.7);
       }
 
       .ball.added {
@@ -219,6 +223,46 @@
 
       .ball.removed {
         animation: BallDisappear 0.5s both;
+      }
+
+      .ball::before {
+        display: none;
+        transition: transform 0.2s;
+      }
+      .show-symbols .ball::before {
+        display: unset;
+      }
+      .ball.color-c0::before {
+        content: '✖';
+        padding-left: 0.1ch;
+      }
+      .ball.color-c1::before {
+        content: '⚛';
+        padding-bottom: 0.1em;
+      }
+      .ball.color-c2::before {
+        content: '✦';
+        padding-bottom: 0.2em;
+      }
+      .ball.color-c3::before {
+        content: '■';
+        padding-bottom: 0.2em;
+        font-size: 0.8em;
+      }
+      .ball.color-c4::before {
+        content: '✿';
+        padding-bottom: 0.2em;
+      }
+      .ball.color-c5::before {
+        content: '•';
+        padding-top: 0.05em;
+      }
+      .ball.color-c6::before {
+        content: '❤';
+        padding-bottom: 0.1em;
+      }
+      .ball.selected::before {
+        transform: scale(1.2);
       }
 
       #next-colors {
@@ -370,11 +414,15 @@
         </h2>
         <label>
           <input type="checkbox" id="checkbox-less-colors" />
-          <span id="less-colors">Mniej kolorów</span>
+          <span id="less-colors">6 zamiast 7 kolorów</span>
         </label>
         <label>
           <input type="checkbox" id="checkbox-fast-animations" />
           <span id="fast-animations">Szybsze animacje</span>
+        </label>
+        <label>
+          <input type="checkbox" id="checkbox-show-symbols" />
+          <span id="show-symbols">Pokazuj symbole</span>
         </label>
         <p id="setting-warning">Zmiany będą obowiązywać od kolejnej gry</p>
       </header>
