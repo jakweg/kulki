@@ -225,13 +225,15 @@
         animation: BallDisappear 0.5s both;
       }
 
-      .ball::before {
+      .ball::before,
+      #next-colors > ::before {
         display: none;
         transition: transform 0.2s;
         width: calc(var(--ball-size) * 0.6);
         height: calc(var(--ball-size) * 0.6);
       }
-      .show-symbols .ball::before {
+      .show-symbols .ball::before,
+      .show-symbols #next-colors > ::before {
         display: unset;
       }
       .color-c0::before {
