@@ -55,6 +55,7 @@ const startGame = (ignoreSerialized: boolean) => {
       for (const color of nextColors) {
         const span = document.createElement("span");
         span.style.setProperty("--color", `var(--${color})`);
+        span.classList.add(`color-${color}`);
         nextColorsSpan.appendChild(span);
       }
     } else {
@@ -64,6 +65,16 @@ const startGame = (ignoreSerialized: boolean) => {
           "--color",
           `var(--${nextColors[i]})`
         );
+        child.classList.remove(
+          `color-c0`,
+          `color-c1`,
+          `color-c2`,
+          `color-c3`,
+          `color-c4`,
+          `color-c5`,
+          `color-c6`
+        );
+        child.classList.add(`color-${nextColors[i]}`);
         i++;
       }
     }
